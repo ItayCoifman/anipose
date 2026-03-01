@@ -127,7 +127,7 @@ def viterbi_path_wrapper(args):
 
 
 
-def filter_pose_viterbi(config, all_points, bodyparts):
+def filter_pose_viterbi(config, all_points, bodyparts=None, progress=True):
     n_frames, n_joints, n_possible, _ = all_points.shape
 
     points_full = all_points[:, :, :, :2]
@@ -154,8 +154,7 @@ def filter_pose_viterbi(config, all_points, bodyparts):
                  for jix in range(n_joints) ]
 
     results = pool.imap_unordered(viterbi_path_wrapper, iterable)
-
-    for jix, pts_new, scs_new in tqdm(results, ncols=70):
+    for jix, pts_new, scs_new in (tqdm(results, ncols=70) if progress else results):
         points[:, jix] = pts_new
         scores[:, jix] = scs_new
 
